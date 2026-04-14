@@ -3,75 +3,60 @@ import sys
 import pyautogui
 import pygetwindow as gw
 
-MESSAGE = ["!work", "!dep all"]
-INTERVAL = 60
-REPEAT_COUNT = 0
-WINDOW_TITLE = "Discord"
-TYPING_DELAY = 0.01
+MESSAGES = [
+    ("!work",    20),
+    ("!dep all", 70),
+]
+WINDOW_TITLE  = "Discord"
+TYPING_DELAY  = 0.01
 
 def find_discord_window():
-    all_windows = gw.getAllWindows()
-    
-    for w in all_windows:
+    for w in gw.getAllWindows():
         if WINDOW_TITLE.lower() in w.title.lower():
             return w
     return None
 
-
-def focus_and_send(window):
+def click_message_box(window):
     try:
         window.activate()
         time.sleep(0.5)
     except Exception:
         pass
 
-    win_left   = window.left
-    win_top    = window.top
-    win_width  = window.width
-    win_height = window.height
-
-    click_x = win_left + win_width // 2
-    click_y = win_top + int(win_height * 0.93)   # ~93% down = message input
-
+    click_x = window.left + window.width // 2
+    click_y = window.top + int(window.height * 0.93)
     pyautogui.click(click_x, click_y)
     time.sleep(0.3)
 
-    pyautogui.typewrite(MESSAGE, interval=TYPING_DELAY)
+def send_message(text):
+    pyautogui.typewrite(text, interval=TYPING_DELAY)
     time.sleep(0.1)
     pyautogui.press("enter")
-    print(f"  [sent] {MESSAGE}")
 
 def main():
     pyautogui.FAILSAFE = True
 
-    print("Gapbo Town - Auto Work")
-    print("==================")
-    print(f"  Message  : {MESSAGE!r}")
-    print(f"  Interval : {INTERVAL}s")
-    print(f"  Repeats  : {'forever' if REPEAT_COUNT == 0 else REPEAT_COUNT}")
-    print(f"  Failsafe : move mouse to top-left corner to stop\n")
+    print("Gapbo Town - Auto Work & Deposit")
+    print("==================================")
 
-    sent = 0
+    loop = 0
     while True:
+        loop += 1
+        print(f"ทำงานไปแล้ว : {loop} ครั้ง")
+
         window = find_discord_window()
         if window is None:
-            print(f"[!] No window matching '{WINDOW_TITLE}' found. Retrying in {INTERVAL}s…")
-        else:
-            print(f"[+] Found: '{window.title}'")
-            focus_and_send(window)
-            sent += 1
+            print(f"ไม่พบหน้าต่าง Discord")
+            time.sleep(10)
+            continue
 
-        if REPEAT_COUNT > 0 and sent >= REPEAT_COUNT:
-            print(f"\n[done] Sent {sent} message(s). Exiting.")
-            break
-
-        print(f"    Waiting {INTERVAL}s… (Ctrl-C or top-left mouse to stop)\n")
-        try:
-            time.sleep(INTERVAL)
-        except KeyboardInterrupt:
-            print("\n[stopped] Keyboard interrupt.")
-            sys.exit(0)
-
+        for msg, wait in MESSAGES:
+            click_message_box(window)
+            send_message(msg)
+            try:
+                time.sleep(wait)
+            except KeyboardInterrupt:
+                sys.exit(0)
 
 if __name__ == "__main__":
     main()
