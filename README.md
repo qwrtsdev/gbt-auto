@@ -1,0 +1,38 @@
+# สิ่งที่ต้องทำก่อนใช้
+
+1. ติดตั้ง Python เวอร์ชั่นล่าสุด [คลิกตรงนี้](https://www.python.org/downloads/)
+2. ติดตั้ง UV ก่อนใช้ [คลิกตรงนี้](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer)
+3. รันคำสั่งใน Terminal ของโปรเจค
+
+```cmd
+uv venv
+```
+
+เพื่อสร้าง virtual environment ของระบบ และใช้คำสั่ง
+
+```cmd
+uv add -r requirements.txt
+uv lock
+uv sync
+```
+
+เพื่อติดตั้ง dependency ที่จำเป็น
+
+# วิธีการรันสคริปต์
+
+```cmd
+uv run main.py
+```
+
+# คำแนะนำเพิ่มเติม
+
+สามารถเปลี่ยนค่าในตัวแปร `MESSAGES` ได้เพื่อเปลี่ยนข้อความ
+
+```py
+MESSAGES = [
+    ("!work",    20),
+    ("!dep all", 70),
+]
+```
+
+เพิ่ม `("ข้อความ", เวลา)` เข้าไปได้เลย มันจะทำงานแบบรันตัวแรกก่อน แล้วรอ แล้วจึงทำอันต่อไป (เช่นตัวอย่างคือพิมพ์ !work ก่อนแล้วรอ 20 วินาที แล้วจีงพิมพ์ตัวต่อไป)
